@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latihan 1 - Portal Mahasiswa</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px 10px;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            text-transform: uppercase;
+        }
+
+        .nav {
+            background-color: #1e293b;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .nav-btn {
+            background-color: transparent;
+            color: white;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .nav-btn:hover {
+            background-color: #2563eb;
+        }
+
+        .nav-btn.active {
+            background-color: #2563eb;
+            border-bottom: 4px solid #93c5fd;
+        }
+
+        .content {
+            padding: 30px 40px; 
+            min-height: 400px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        h2 {
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .quote-box {
+            background: #f8fafc;
+            border-left: 4px solid #2563eb;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+        }
+
+        .quote-box small {
+            color: #2563eb;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        .quote-box p {
+            margin: 8px 0 0 0;
+            font-style: italic;
+            color: #475569;
+            font-size: 15px;
+        }
+
+        .form-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-table {
+            width: 100%;
+        }
+
+        .form-table td {
+            padding: 8px 4px;
+        }
+
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Modal Notifikasi */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .modal-box h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+
+        .modal-box p {
+            font-size: 13px;
+            color: #475569;
+            text-align: left;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            white-space: pre-line;
+        }
+
+        .modal-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Tabel Absensi */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .absensi-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .absensi-table th, .absensi-table td {
+            border: 1px solid #cbd5e1;
+            padding: 6px;
+        }
+
+        .absensi-table th {
+            background-color: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .text-left {
+            text-align: left !important;
+            padding-left: 10px !important;
+        }
+
+        /* Checkbox Absen yang Nyaman Diklik */
+        .input-absen {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #2563eb;
+        }
+
+        /* Profil */
+        .profile-wrapper {
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        .profile-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            gap: 20px;
+        }
+
+        .profile-img {
+            width: 130px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 3px solid #2563eb;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .profile-details {
+            width: 100%;
+        }
+
+        .profile-details td {
+            padding: 6px 8px;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .footer {
+            background-color: #1e293b;
+            color: #94a3b8;
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+        }
+
+        @media (min-width: 768px) {
+            .profile-box {
+                flex-direction: row;
+                text-align: left;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="header">
+            <h1>PORTAL DATA MAHASISWA KELAS IF-D</h1>
+        </div>
+
+        <div class="nav">
+            <button class="nav-btn active" onclick="bukaTab(event, 'tab-home')">Home</button>
+            <button class="nav-btn" onclick="bukaTab(event, 'tab-form')">Form Input</button>
+            <button class="nav-btn" onclick="bukaTab(event, 'tab-absensi')">Data Absensi</button>
+            <button class="nav-btn" onclick="bukaTab(event, 'tab-profil')">Profil Saya</button>
+        </div>
+
+        <div class="content">
+
+            <!-- 1. TAB HOME -->
+            <div id="tab-home" class="tab-pane active">
+                <h2>Halaman Home</h2>
+                <div class="quote-box">
+                    <small>INFORMASI UTAMA</small>
+                    <p>"Selamat datang di Portal Data Mahasiswa Kelas IF-D. Website resmi untuk memantau data akademik, form input mahasiswa, serta daftar absensi perkuliahan secara terpadu."</p>
+                </div>
+                <div class="quote-box">
+                    <small>STATUS AKADEMIK</small>
+                    <p>"Sistem ini dirancang untuk memudahkan pengelolaan absensi 16 pertemuan kelas Teknik Informatika dengan fitur interaktif yang cepat, praktis, dan akurat."</p>
+                </div>
+            </div>
+
+            <!-- 2. TAB FORM INPUT -->
+            <div id="tab-form" class="tab-pane">
+                <h2>Form Data Mahasiswa</h2>
+                <div class="form-wrapper">
+                    <form id="mahasiswaForm" onsubmit="tampilkanNotifikasi(event)">
+                        <table class="form-table">
+                            <tr>
+                                <td width="130"><label for="nama"><b>Nama</b></label></td>
+                                <td><input type="text" id="nama" name="nama" required></td>
+                            </tr>
+                            <tr>
+                                <td><label for="tempat_lahir"><b>Tempat Lahir</b></label></td>
+                                <td><input type="text" id="tempat_lahir" name="tempat_lahir" required></td>
+                            </tr>
+                            <tr>
+                                <td><label for="tanggal_lahir"><b>Tanggal Lahir</b></label></td>
+                                <td><input type="date" id="tanggal_lahir" name="tanggal_lahir" required></td>
+                            </tr>
+                            <tr>
+                                <td><label><b>Jenis Kelamin</b></label></td>
+                                <td>
+                                    <input type="radio" id="pria" name="jenis_kelamin" value="Pria" checked>
+                                    <label for="pria">Pria</label>
+                                    &nbsp;&nbsp;
+                                    <input type="radio" id="wanita" name="jenis_kelamin" value="Wanita">
+                                    <label for="wanita">Wanita</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label for="alamat"><b>Alamat</b></label></td>
+                                <td>
+                                    <textarea id="alamat" name="alamat" rows="4" required></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><input type="submit" value="PRESSED"></td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal Notifikasi -->
+            <div id="customModal" class="modal-overlay">
+                <div class="modal-box">
+                    <h3>Berhasil Disimpan!</h3>
+                    <p id="modalText"></p>
+                    <button class="modal-btn" onclick="tutupNotifikasi()">OK</button>
+                </div>
+            </div>
+
+            <!-- 3. TAB DATA ABSENSI -->
+            <div id="tab-absensi" class="tab-pane">
+                <h2>Halaman Data Absensi</h2>
+                <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">* Cukup centang kotak di setiap pertemuan untuk menandai kehadiran mahasiswa.</p>
+                <div class="table-container">
+                    <table class="absensi-table">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">No</th>
+                                <th rowspan="2">Nim</th>
+                                <th rowspan="2">Nama</th>
+                                <th colspan="16">Pertemuan</th>
+                                <th rowspan="2">Ket</th>
+                            </tr>
+                            <tr>
+                                <th>1</th><th>2</th><th>3</th><th>4</th>
+                                <th>5</th><th>6</th><th>7</th><th>8</th>
+                                <th>9</th><th>10</th><th>11</th><th>12</th>
+                                <th>13</th><th>14</th><th>15</th><th>16</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <script>
+                                const mahasiswaList = [
+                                    { nim: "D112511077", nama: "Abdul Fajar Septiawan" },
+                                    { nim: "D112511078", nama: "Adit Prasetya Muhammad Putra" },
+                                    { nim: "D112511079", nama: "Alda Aditya" },
+                                    { nim: "D112511080", nama: "Andycha Suryaputra" },
+                                    { nim: "D112511081", nama: "Bagus Dwi Febriansyah" },
+                                    { nim: "D112511082", nama: "Chandra Mardika" },
+                                    { nim: "D112511083", nama: "Elang Adi Pratama" },
+                                    { nim: "D112511084", nama: "Elsa Syarif" },
+                                    { nim: "D112511085", nama: "Eriana Maulidiawan" },
+                                    { nim: "D112511086", nama: "Fajar Setiawan" },
+                                    { nim: "D112511087", nama: "Jiyan Muhammad" },
+                                    { nim: "D112511088", nama: "M Abdan Husaeni" },
+                                    { nim: "D112511089", nama: "M Fadlan Al Farizi" },
+                                    { nim: "D112511090", nama: "Moch Tirta Alramzi" },
+                                    { nim: "D112511091", nama: "Moehamad Desta Pratama Putra" },
+                                    { nim: "D112511092", nama: "Muhamad Naza Al Bukhori" },
+                                    { nim: "D112511093", nama: "Muhammad Althaf Arrauf" },
+                                    { nim: "D112511094", nama: "Muhammad Farhan Mubarok" },
+                                    { nim: "D112511095", nama: "Muhammad Rizky Farhan" },
+                                    { nim: "D112511096", nama: "Muhammad Rizky Novrian" },
+                                    { nim: "D112511097", nama: "Pasya Salsabila Putri" },
+                                    { nim: "D112511098", nama: "Putri Aulia Ressya" },
+                                    { nim: "D112511099", nama: "Riska Yulianti" },
+                                    { nim: "D112511100", nama: "Risti Wulan Lestari" },
+                                    { nim: "D112511101", nama: "Wiska Monica" },
+                                    { nim: "D112511102", nama: "Hadi Firdaus Aminudin" },
+                                    { nim: "D112511165", nama: "M. Yazid Ilmany Firmansyah" }
+                                ];
+
+                                mahasiswaList.forEach((mhs, index) => {
+                                    document.write(`<tr>
+                                        <td>${index + 1}</td>
+                                        <td>${mhs.nim}</td>
+                                        <td class="text-left">${mhs.nama}</td>`);
+                                    for(let i = 1; i <= 16; i++) {
+                                        document.write(`<td><input type="checkbox" class="input-absen"></td>`);
+                                    }
+                                    document.write(`<td>-</td></tr>`);
+                                });
+                            </script>
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold; background-color: #e2e8f0;">
+                                <td colspan="3" class="text-left">Jumlah Mhs</td>
+                                <td colspan="17">27 Mahasiswa</td>
+                            </tr>
+                            <tr style="font-weight: bold; background-color: #e2e8f0;">
+                                <td colspan="3" class="text-left">TTD Dosen</td>
+                                <td colspan="17">Terverifikasi</td>
+                            </tr>
+                            <tr style="font-weight: bold; background-color: #e2e8f0;">
+                                <td colspan="3" class="text-left">Jumlah Jam</td>
+                                <td colspan="17">32 Jam Perkuliahan</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4. TAB PROFIL SAYA -->
+            <div id="tab-profil" class="tab-pane">
+                <h2>Profil Saya</h2>
+                <div class="profile-wrapper">
+                    <div class="profile-box">
+                        <div>
+                            <img src="pasya.jpg" onerror="this.onerror=null; this.src='pasya.jpeg';" alt="Foto Profil" class="profile-img">
+                        </div>
+                        <div style="width: 100%;">
+                            <table class="profile-details">
+                                <tr>
+                                    <td width="90"><strong>Nama</strong></td>
+                                    <td width="10">:</td>
+                                    <td>Pasya Salsabila Putri</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>NIM</strong></td>
+                                    <td>:</td>
+                                    <td>D112511097</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Prodi</strong></td>
+                                    <td>:</td>
+                                    <td>Teknik Informatika</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Alamat</strong></td>
+                                    <td>:</td>
+                                    <td>Leuwigajah, Cimahi Selatan, Kota Cimahi</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            Footer &copy; 2026 - Portal Akademik Mahasiswa
+        </div>
+
+    </div>
+
+    <script>
+        function bukaTab(evt, namaTab) {
+            let tabPane = document.getElementsByClassName("tab-pane");
+            for (let i = 0; i < tabPane.length; i++) {
+                tabPane[i].style.display = "none";
+            }
+
+            let navBtn = document.getElementsByClassName("nav-btn");
+            for (let i = 0; i < navBtn.length; i++) {
+                navBtn[i].className = navBtn[i].className.replace(" active", "");
+            }
+
+            document.getElementById(namaTab).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.getElementById("tab-home").style.display = "block";
+
+        function tampilkanNotifikasi(e) {
+            e.preventDefault();
+            
+            const nama = document.getElementById('nama').value;
+            const tempatLahir = document.getElementById('tempat_lahir').value;
+            const tanggalLahir = document.getElementById('tanggal_lahir').value;
+            const jenisKelamin = document.querySelector('input[name="jenis_kelamin"]:checked').value;
+            const alamat = document.getElementById('alamat').value;
+
+            const isiPesan = `Nama: ${nama}\nTempat Lahir: ${tempatLahir}\nTanggal Lahir: ${tanggalLahir}\nKelamin: ${jenisKelamin}\nAlamat: ${alamat}`;
+            
+            document.getElementById('modalText').innerText = isiPesan;
+            document.getElementById('customModal').style.display = "flex";
+        }
+
+        function tutupNotifikasi() {
+            document.getElementById('customModal').style.display = "none";
+            document.getElementById('mahasiswaForm').reset();
+        }
+    </script>
+
+</body>
+</html>
